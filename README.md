@@ -1,2 +1,2 @@
-# proj7_weatherTracker
+# proj7_readmeGen
 Challenge 7
