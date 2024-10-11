@@ -1,5 +1,6 @@
 const inquirer = require("inquirer");
 const fs = require("fs");
+const path = require("path"); // Module for handling file paths
 const generateMarkdown = require("./generateMarkdown");
 
 const questions = [
@@ -64,25 +65,34 @@ const questions = [
     },
 ];
 
-// Function to write the generated README content to a file with enhanced error handling
+// Function to write the generated README content to a file within the readme-output directory
 function writeToFile(fileName, data) {
-    fs.writeFile(fileName, data, (err) => {
+    const directory = 'readme-output';
+
+    // Check if the directory exists, if not, create it
+    if (!fs.existsSync(directory)) {
+        fs.mkdirSync(directory); // Create the directory if it doesn't exist
+    }
+
+    const filePath = path.join(directory, fileName); // Construct the full path to the README file
+
+    // Write the README content to the file
+    fs.writeFile(filePath, data, (err) => {
         if (err) {
             console.error("Error writing file:", err.message); // Log the specific error message
             console.error("Make sure you have write permissions in this directory and the file path is correct.");
         } else {
-            console.log('Successfully created README.md!');
+            console.log(`Successfully created ${filePath}!`);
         }
     });
 }
-
 
 function init() {
     inquirer.prompt(questions)
         .then((answers) => {
             try {
                 const markdownContent = generateMarkdown(answers);
-                writeToFile('README.md', markdownContent);
+                writeToFile('README.md', markdownContent); // Save the file in the readme-output directory
             } catch (error) {
                 console.error("An error occurred while generating the README content:", error);
             }
